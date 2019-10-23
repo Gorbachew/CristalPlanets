@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "846661066886",
+    "firebase_url": "https://cristalplanets.firebaseio.com",
+    "project_id": "cristalplanets",
+    "storage_bucket": "cristalplanets.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:846661066886:android:8d6844f2ab2eff892db107",
+        "android_client_info": {
+          "package_name": "gorbachew.pythonanywhere.com"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "846661066886-sgc9ktg68tb47nben6a5viksjfsojbvk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDu6125OeXXvwEPZ8_f5xafdHrb8Ox_mgA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "846661066886-sgc9ktg68tb47nben6a5viksjfsojbvk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

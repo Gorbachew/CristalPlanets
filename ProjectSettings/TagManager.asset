@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - LevelMine
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Robot
+    uniqueID: 3271070923
+    locked: 0
+  - name: RobotEng
+    uniqueID: 8571307
+    locked: 0
+  - name: Btn
+    uniqueID: 943686647
+    locked: 0
+  - name: Overlay
+    uniqueID: 684276157
+    locked: 0
+  - name: Black
+    uniqueID: 1591635369
+    locked: 0
