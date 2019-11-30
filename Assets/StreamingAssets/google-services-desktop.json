@@ -1,34 +1,34 @@
 {
   "project_info": {
-    "project_number": "846661066886",
-    "firebase_url": "https://cristalplanets.firebaseio.com",
-    "project_id": "cristalplanets",
-    "storage_bucket": "cristalplanets.appspot.com"
+    "project_number": "549535769348",
+    "firebase_url": "https://crystal-planets-fe735.firebaseio.com",
+    "project_id": "crystal-planets-fe735",
+    "storage_bucket": "crystal-planets-fe735.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:846661066886:android:8d6844f2ab2eff892db107",
+        "mobilesdk_app_id": "1:549535769348:android:2491d4b34e4bf34b0b6651",
         "android_client_info": {
-          "package_name": "gorbachew.pythonanywhere.com"
+          "package_name": "com.gorbachew.crystalplanets"
         }
       },
       "oauth_client": [
         {
-          "client_id": "846661066886-sgc9ktg68tb47nben6a5viksjfsojbvk.apps.googleusercontent.com",
+          "client_id": "549535769348-4uv731qplfecmf0ih2kqsf3v4uqjamg0.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDu6125OeXXvwEPZ8_f5xafdHrb8Ox_mgA"
+          "current_key": "AIzaSyCs09-KzFE_bZgYoo1A6fMxheZhTNEyoKA"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "846661066886-sgc9ktg68tb47nben6a5viksjfsojbvk.apps.googleusercontent.com",
+              "client_id": "549535769348-4uv731qplfecmf0ih2kqsf3v4uqjamg0.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

@@ -25,7 +25,7 @@ namespace GoogleMobileAds.Common
     {
         public DummyClient()
         {
-            Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
+         //   Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
         }
 
         // Disable warnings for unused dummy ad events.
@@ -72,7 +72,7 @@ namespace GoogleMobileAds.Common
 
         public void Initialize(Action<InitializationStatus> initCompleteAction)
         {
-            Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
+        //    Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
         }
 
         public void SetApplicationMuted(bool muted)
@@ -98,7 +98,7 @@ namespace GoogleMobileAds.Common
 
         public void CreateBannerView(string adUnitId, AdSize adSize, AdPosition position)
         {
-            Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
+          //  Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
         }
 
         public void CreateBannerView(string adUnitId, AdSize adSize, int positionX, int positionY)
@@ -108,7 +108,7 @@ namespace GoogleMobileAds.Common
 
         public void LoadAd(AdRequest request)
         {
-            Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
+         //   Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
         }
 
         public void ShowBannerView()
@@ -150,7 +150,7 @@ namespace GoogleMobileAds.Common
 
         public void CreateInterstitialAd(string adUnitId)
         {
-            Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
+         //   Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
         }
 
         public bool IsLoaded()
@@ -161,17 +161,17 @@ namespace GoogleMobileAds.Common
 
         public void ShowInterstitial()
         {
-            Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
+          //  Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
         }
 
         public void DestroyInterstitial()
         {
-            Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
+          //  Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
         }
 
         public void CreateRewardBasedVideoAd()
         {
-            Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
+       //     Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
         }
 
         public void SetUserId(string userId)

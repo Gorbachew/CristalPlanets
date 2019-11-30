@@ -6,108 +6,71 @@ public class PlanetInfo : MonoBehaviour
 {
     
     [SerializeField]
-    private int mineLevels;
     //For create price
-    private long priceBuer = 100, priceDyn = 50,priceRobotMiner = 20,priceRocket = 500000,priceFactory = 30,priceLab = 150,priceElevator = 250;
+    public const int priceBuer = 100, priceDyn = 10,priceRobotMiner = 20,priceRocket = 10000,priceFactory = 25,priceLab = 1000,priceElevator = 209;
+    public const int Bag = 5, Speed = 10, Mine = 20, Energy = 50;
+    public const int priceBag = 500, priceSpeed = 1000, priceMine = 2500, priceEnergy = 5000;
     //Levels Builds
-    private int levelFactory, levelLab, levelElevator, levelRocket;
+    [SerializeField]
+    private int levelMine, levelFactory, levelLab, levelElevator, levelRocket;
     //Needing level lab for upgrades Lab
     public bool upgradeBagBool, upgradeSpeedBool, upgradeMineBool, upgradeEnergyBool;
-    private int Bag = 5, Speed = 10, Mine = 20, Energy = 50;
-    private int priceBag = 500, priceSpeed = 1000, priceMine = 2500, priceEnergy = 5000;
-   
-    private Factory factory;
-    private Elevator elevator;
-    private Rocket rocket;
-    private Lab lab;
-    private SAVELOAD saveload;
-    Transform canvasScore;
-    Score scoreObj;
-    Fuel fuelObj;
 
 
-    //0 - Count MineBlock, 1 - Robots,2-BagUp,3-SpeedUp,4-MineUp,5-EnergyUp;
-    public List<List<string>> MINESINFO = new List<List<string>>();
 
-    private void Awake()
+    protected SceneManage SM;
+
+    public void Awake()
     {
-        canvasScore = GameObject.Find("CanvasScore").transform;
-        scoreObj = canvasScore.Find("Score").GetComponent<Score>();
-        fuelObj = canvasScore.Find("Fuel").GetComponent<Fuel>();
-        factory = GameObject.Find("Factory").GetComponent<Factory>();
-        rocket = GameObject.Find("RocketPlace").GetComponent<Rocket>();
-        lab = GameObject.Find("Lab").GetComponent<Lab>();
-        elevator = Camera.main.GetComponent<Elevator>();
-        saveload = GameObject.Find("SL").GetComponent<SAVELOAD>();
-        
-    }
-    private void Start()
-    {
-        LoadInfo();
-        //Прогрузка цен зданий, на фоне загруженной информации
-        Builds[] builds = GameObject.Find("Up/Buttons").GetComponentsInChildren<Builds>();
-        foreach (Builds build in builds)
-        {
-            build.LoadStartInfoBuilds(true);
-           
-        }
+        Debug.Log("Awake PlanetInfo");
+        SM = GameObject.Find("MainCamera").GetComponent<SceneManage>();
     }
 
-    //Сохранения и загрузка 
-    public void PlusMineLevels(int value)
-    {
-        mineLevels += value;
-    }
-    public int MineLevels()
-    {
-        return mineLevels;
-    }
+
     public void RocketStarted(long GC)
     {
         levelRocket = 2;
-        saveload.ChangeGC('+', GC);
-        rocket.CheckLevel();
-        saveload.UpdateScore();
-        priceRocket = 500000;
-        GameObject.Find("Up/Buttons/btnR").GetComponent<Builds>().LoadStartInfoBuilds(true);
-        
+        //Прибавляет к глобальным кристалам счет
+        SM.SL.ChangeGC('+', GC);
+        //Обновляет счет в БД
+        if(SM.SL.ShowInfo("Name") != "Anonim") SM.SL.UpdateScore();
+        //Обновляет уровень зданий
+        SM.btnR.GetComponent<Builds>().LoadInfoBuilds(true);
     }
-    public void UpLvlBuilds(bool Start,string Build,long price)
+    public void LvlUpBuilds(string Build)
     {
-
         switch (Build)
         {
             case "R":
-                if(!Start)levelRocket += 1;
-                priceRocket = price;
-                rocket.CheckLevel();
+                levelRocket += 1;   
+                SM.objRock.GetComponent<Rocket>().CheckLevel();
                 break;
             case "E":
-                if (!Start) levelElevator += 1;
-                priceElevator = price;
-                elevator.CheckLevel();
+                levelElevator += 1;
+                SM.objStock.GetComponent<Elevator>().CheckLevel();
                 break;
             case "F":
-                if (!Start) levelFactory += 1;
-                priceFactory = price;
-                factory.CheckLevel();
+                levelFactory += 1;
+                SM.objFac.GetComponent<Factory>().CheckLevel();
                 break;
             case "L":
-                if (!Start) levelLab += 1;
-                priceLab = price;
-                lab.CheckLevel();
+                levelLab += 1;
+                SM.objLab.GetComponent<Lab>().CheckLevel();
+                break;
+            case "M":
+                levelMine += 1;
                 break;
         }
     }
 
 
     //Wached level and upgrades
-    public string ShowInfo(string Collection,string Number)
+    public string ShowInfo(string Collection,string Build)
     {
        
         if (Collection == "Levels")
         {
-            switch (Number)
+            switch (Build)
             {
                 case "R":
                     return levelRocket.ToString();
@@ -117,12 +80,15 @@ public class PlanetInfo : MonoBehaviour
                     return levelFactory.ToString();
                 case "L":
                     return levelLab.ToString();
+                case "M":
+                    return levelMine.ToString();
+                    
 
             }
         }
         else if (Collection == "Lab")
         {
-            switch (Number)
+            switch (Build)
             {
                 case "B":
                     return Bag.ToString();
@@ -135,113 +101,114 @@ public class PlanetInfo : MonoBehaviour
 
             }
         }
-        
-        
-
         return "Error";
     }
-    public long ShowPrice(string Number)
-    {
-
-        switch (Number)
-        {
-            case "R":
-                return priceRocket;
-            case "E":
-                return priceElevator;
-            case "F":
-                return priceFactory;
-            case "L":
-                return priceLab;
-            case "B":
-                return priceBuer;
-            case "RB":
-                return priceRobotMiner;
-            case "D":
-                return priceDyn;
-            case "UB":
-                return priceBag;
-            case "US":
-                return priceSpeed;
-            case "UM":
-                return priceMine;
-            case "UE":
-                return priceEnergy;
-        }
-
-        return 404;
-    }
     
-            
     public void LoadInfo()
     {
-        Score score = GameObject.Find("CanvasScore/Score").GetComponent<Score>();
-        Fuel fuel = GameObject.Find("CanvasScore/Fuel").GetComponent<Fuel>();
-
-        string[] PlanetParts = saveload.ShowInfo("Planet1").Split('/');
+        //Обнуление переменных
+        levelMine = 0; levelFactory = 0; levelLab = 0; levelElevator = 0; levelRocket = 0;
+        upgradeBagBool = false; upgradeSpeedBool = false; upgradeMineBool = false; upgradeEnergyBool = false;
+        SM.Mines.MINESINFO.Clear();
+        //Загрузка новых данных
+        Debug.Log(SM.SL.ShowInfo("Planet0"));
+        string[] PlanetParts = SM.SL.ShowInfo("Planet0").Split('/');
         List<string> PlanetPartList = PlanetParts.ToList();
-
-        score.Plus(long.Parse(PlanetPartList[0]));
-        fuel.Plus(long.Parse(PlanetPartList[1]));
+        //Обнуляет старый счет и выдает новый
+        SM.Score.Load();
+        SM.Score.Change("C", "+", long.Parse(PlanetPartList[0]));
+        SM.Score.Change("F", "+", long.Parse(PlanetPartList[1]));
         levelRocket = int.Parse(PlanetPartList[2]);
-        levelElevator = int.Parse(PlanetPartList[3]); 
-        levelFactory = int.Parse(PlanetPartList[4]);
+        levelElevator = int.Parse(PlanetPartList[3]);
+
+        string[] factoryParam = PlanetPartList[4].Split('.');
+        levelFactory = int.Parse(factoryParam[0]);
+        SM.Factory.orderPump = int.Parse(factoryParam[1]);
+
         levelLab = int.Parse(PlanetPartList[5]);
 
         //Удаление информации о зданиях и счете для прогрузки шахт
         PlanetPartList.RemoveRange(0, 6);
-        
-        Boer boer = GameObject.Find("Boer").GetComponent<Boer>();
+        //Прогрузка шахт
         foreach (string mine in PlanetPartList)
         {
+            List<int> newMine = new List<int>();
             string[] mineParts = mine.Split('.');
-            
-            //Создает уровень
-            MineExpansion mineExpansion = boer.PlusMine(true).GetComponent<MineExpansion>();
-            for (int i = 0;i < int.Parse(mineParts[0]); i++)
+            foreach(string part in mineParts)
             {
-                mineExpansion.BuyDyn(true);
+                newMine.Add(int.Parse(part));
             }
-            for (int i = 0; i < int.Parse(mineParts[1]); i++)
-            {
-                mineExpansion.BuyRobot(true);
-            }
-       
-            if(mineParts[2] == "1") mineExpansion.BuyUp("B");
-            if(mineParts[3] == "1") mineExpansion.BuyUp("S");
-            if(mineParts[4] == "1") mineExpansion.BuyUp("M");
-            if(mineParts[5] == "1") mineExpansion.BuyUp("E");
-            
+
+           SM.Mines.MINESINFO.Add(newMine);
 
         }
-    }
-    
-    
-    private void OnDisable()
-    {
-        saveload.CollectionData("Planet1",GenerateStrPlanets());
-    }
+        //Прогрузка цен зданий, на фоне загруженной информации
+        foreach (Builds build in SM.Builds)
+        {
+            build.LoadInfoBuilds(true);
 
-    private string GenerateStrPlanets()
+        }
+
+        SM.Mines.Load();
+
+        SM.Factory.Load();
+        SM.objBoer.GetComponent<Boer>().LoadBoer();
+        SM.Rocket.CheckLevel();
+        SM.Rocket.Load();
+        SM.Elevator.Load();
+        SM.objFac.GetComponent<Factory>().CheckLevel();
+        SM.objLab.GetComponent<Lab>().CheckLevel();
+    } 
+
+    public string GenerateStrPlanets()
     {
         string allparamMinesInfo = "";
-        allparamMinesInfo += scoreObj.Value().ToString() + "/";
-        allparamMinesInfo += fuelObj.Value().ToString() + "/";
-        allparamMinesInfo += levelRocket  + "/";
+        allparamMinesInfo += SM.Score.Value("C").ToString() + "/";
+        allparamMinesInfo += SM.Score.Value("F").ToString() + "/";
+        allparamMinesInfo += levelRocket + "/";
         allparamMinesInfo += levelElevator + "/";
-        allparamMinesInfo += levelFactory + "/";
+        allparamMinesInfo += levelFactory + "." + SM.Factory.orderPump.ToString() + "/";
         allparamMinesInfo += levelLab;
+
         //Запись списка с шахтами в строку
-        foreach (List<string> a in MINESINFO)
+        foreach (List<int> a in SM.Mines.MINESINFO)
         {
             allparamMinesInfo += "/";
-            foreach (string b in a)
+            foreach (int b in a)
             {
-                allparamMinesInfo += b + ".";
+                allparamMinesInfo += b.ToString() + ".";
             }
             allparamMinesInfo = allparamMinesInfo.TrimEnd('.');
         }
-        return allparamMinesInfo;
+        
+        if (allparamMinesInfo.Length > 200)
+        {
+            Debug.Log("Сгенерировалась инфа " + allparamMinesInfo);
+            return allparamMinesInfo;
+        }         
+        else
+        {
+            Debug.Log("Какая то ошибка" + allparamMinesInfo);
+            return "Error";
+        }
+        
+
     }
+
+
+
+    private void OnApplicationPause(bool pause)
+    {
+        string plinfo = GenerateStrPlanets();
+        if (plinfo != "Error") SM.SL.CollectionData("Planet0", plinfo);
+    }
+    private void OnDestroy()
+    {
+        string plinfo = GenerateStrPlanets();
+        if(plinfo != "Error") SM.SL.CollectionData("Planet0", plinfo);
+    }
+
+    
+
 
 }

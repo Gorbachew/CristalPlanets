@@ -1,5 +1,4 @@
-﻿
-using Firebase;
+﻿using Firebase;
 using Firebase.Database;
 using Firebase.Unity.Editor;
 using UnityEngine;

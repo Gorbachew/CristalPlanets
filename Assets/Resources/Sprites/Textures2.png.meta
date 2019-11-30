@@ -77,6 +77,12 @@ TextureImporter:
   - first:
       213: 805005080897832646
     second: Textures2_24
+  - first:
+      213: 8659262410744332078
+    second: Textures2_25
+  - first:
+      213: 3623936716130984745
+    second: Textures2_26
   externalObjects: {}
   serializedVersion: 10
   mipmaps:
@@ -365,10 +371,10 @@ TextureImporter:
       name: Textures2_9
       rect:
         serializedVersion: 2
-        x: 1324
-        y: 1424
-        width: 553
-        height: 107
+        x: 1327
+        y: 1425
+        width: 550
+        height: 106
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -643,7 +649,7 @@ TextureImporter:
         width: 107
         height: 109
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -664,7 +670,7 @@ TextureImporter:
         width: 110
         height: 108
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -685,7 +691,7 @@ TextureImporter:
         width: 108
         height: 106
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -693,6 +699,48 @@ TextureImporter:
       bones: []
       spriteID: 2c2614f45834e6c42a15d11e2d802309
       internalID: 805005080897832646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Textures2_25
+      rect:
+        serializedVersion: 2
+        x: 579
+        y: 929
+        width: 105
+        height: 116
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2d0438a79d74cc6459c47c8242405129
+      internalID: 8659262410744332078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Textures2_26
+      rect:
+        serializedVersion: 2
+        x: 743
+        y: 860
+        width: 157
+        height: 201
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f910a3f32270daa4e94ef3880cec20e9
+      internalID: 3623936716130984745
       vertices: []
       indices: 
       edges: []

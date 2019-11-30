@@ -4,10 +4,8 @@ public class RobotEnginer : MonoBehaviour
 {
 
     private float Speed = 0.3f,timeMove,timeIdle = 10f, Scale;
-    private int Level = 1;
     private Animator animator;
     private int moveDirection;
-    private string State;
     public bool Min,Give;
     private void Awake()
     {
@@ -25,7 +23,6 @@ public class RobotEnginer : MonoBehaviour
             if (timeMove >= 0)
             {
                 timeIdle = 10;
-                State = "Move";
                 timeMove -= Time.deltaTime;
                 animator.SetBool("Move", true);
                 switch (moveDirection)
@@ -36,7 +33,7 @@ public class RobotEnginer : MonoBehaviour
                     case 2:
                         Move(1, Scale);
                         break;
-                }
+                } 
             }
             else
             {
@@ -57,7 +54,6 @@ public class RobotEnginer : MonoBehaviour
 
     public void Move(float direction, float Scale)
     {
-        
         transform.localScale = new Vector2(Scale, transform.localScale.y);
         transform.position = Vector2.MoveTowards(transform.position,
             new Vector2(transform.position.x + direction, transform.position.y),

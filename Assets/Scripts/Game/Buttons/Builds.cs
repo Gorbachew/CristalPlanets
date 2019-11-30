@@ -3,49 +3,57 @@ using UnityEngine.UI;
 
 public class Builds : MonoBehaviour
 {
-    private Transform Canvas;
-    private PlanetInfo planetInfo;
-    private Text textPrice,textLevel;
+    private Text textPrice, textLevel;
     private string nameBuild;
-    private Score score;
-
+    SceneManage SM;
+    [SerializeField]private long price;
     private void Awake()
     {
-        score = GameObject.Find("CanvasScore/Score").GetComponent<Score>();
-        planetInfo = Camera.main.GetComponent<PlanetInfo>();
-        Canvas = gameObject.transform.Find("TextPlace/Canvas");
-        textPrice = Canvas.Find("Text").GetComponent<Text>();
-        textLevel = Canvas.Find("TextLevel").GetComponent<Text>();
-        switch (gameObject.name)
+        Debug.Log("Awake Builds");
+
+        SM = GameObject.Find("MainCamera").GetComponent<SceneManage>();
+        textPrice = gameObject.transform.Find("Text").GetComponent<Text>();
+        textLevel = gameObject.transform.Find("TextLevel").GetComponent<Text>();
+
+
+
+        switch (gameObject.transform.parent.name)
         {
-            case "btnL":
+            case "Lab":
                 nameBuild = "L";
                 break;
-            case "btnR":
+            case "RocketPlace":
                 nameBuild = "R";
                 break;
-            case "btnE":
+            case "Stock":
                 nameBuild = "E";
                 break;
-            case "btnF":
+            case "Factory":
                 nameBuild = "F";
                 break;
+
         }
     }
-    
-    
-    private void OnMouseUpAsButton()
+  
+    public void LoadInfoBuilds(bool Start)
     {
-        gameObject.GetComponentInParent<AudioSource>().Play();
-        LoadStartInfoBuilds(false);
+        //Проверяет уровень зданий
+        //Если это не старт и позволяет бюджет, то увеличивает уровень и вычитывает цену
+        if (SM.Score.CheckPrice(Start,price) && !Start)
+        {
+            SM.PlanetInfo.LvlUpBuilds(nameBuild);
+            SM.Score.Change("C", "-", price);
+        }
+        //Просчитывает цену на нынешний уровень и выводит в игру
+        price = SM.Score.Price(nameBuild);
+        textPrice.text = SM.Score.ConvertPrice(price);
+        textLevel.text = SM.PlanetInfo.ShowInfo("Levels", nameBuild);
+
     }
 
-    public void LoadStartInfoBuilds(bool Start)
+    public void Click()
     {
-       
-        string price = score.PriceBuilds(Start, nameBuild, 1.1f);
-        
-        textPrice.text = price;
-        textLevel.text = planetInfo.ShowInfo("Levels", nameBuild);
+        LoadInfoBuilds(false);
     }
+
 }

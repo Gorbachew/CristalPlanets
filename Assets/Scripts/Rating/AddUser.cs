@@ -1,60 +1,73 @@
 ﻿using Firebase;
 using Firebase.Database;
 using Firebase.Unity.Editor;
-using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class AddUser : MonoBehaviour
 {
-    SAVELOAD SL;
+   
     InputField inputName;
-    DatabaseReference reference;
     GameObject Busy;
-    private string Check;
+    SceneManage SM;
+    private Button btnOpenRegPanel;
+    [SerializeField]
+    private bool Check,NameIsBusy;
+
     private void Awake()
     {
-        FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://cristalplanets.firebaseio.com/");
-        reference = FirebaseDatabase.DefaultInstance.RootReference;
-        inputName = gameObject.GetComponentInChildren<InputField>();
-        SL = GameObject.Find("SL").GetComponent<SAVELOAD>(); 
-        Busy = gameObject.transform.Find("Busy").gameObject;
+        SM = GameObject.Find("MainCamera").GetComponent<SceneManage>();
     }
-    private void Start()
+
+    public void Load()
     {
+        FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://crystal-planets-fe735.firebaseio.com/");
+        btnOpenRegPanel = SM.CanvasRating.transform.Find("Top/Reg").GetComponent<Button>();
+        Busy = SM.objRegTableCont.transform.Find("Busy").gameObject;
+        inputName = SM.objRegTableCont.GetComponentInChildren<InputField>();
+
+
         Busy.SetActive(false);
-        if (SL.ShowInfo("Name") != "Anonim") gameObject.SetActive(false);
-        else gameObject.SetActive(true);
+        if (SM.SL.ShowInfo("Name") == "Anonim") btnOpenRegPanel.interactable = true;
+        else btnOpenRegPanel.interactable = false;
+        //SM.table.Reg();
+        
     }
-    
-
-
-    private void FixedUpdate()
+    private void Add(string name)
+    {       
+        SM.SL.CollectionData("Name", name);
+        //Добавлят в firebase базу
+        SM.SL.RegScore();
+        SM.objTable.SetActive(false);
+    }
+   public IEnumerator WaitCheck()
     {
-        switch (Check)
+        string name = inputName.text;
+        CheckName(name);
+        Busy.SetActive(false);
+        yield return new WaitUntil(() => Check);
+        if (NameIsBusy)
         {
-            case "Busy":
-                Busy.SetActive(true);
-                break;
-            case "Free":
-                string name = inputName.text;
-                SL.CollectionData("Name", name);
-                //Добавлят в firebase базу
-                SL.UpdateScore();
-
-                gameObject.SetActive(false);
-                break;
+            Debug.Log("Занято");
+            Busy.SetActive(true);
         }
-        Check = null;
-    }
+        else
+        {
+            Debug.Log("Свободно");
+            Add(name);
+        }
+        Check = false;
+        NameIsBusy = false;
 
-    public void CheckName()
+    }
+    public void CheckName(string name)
     {
-        gameObject.GetComponent<AudioSource>().Play();
+
         FirebaseDatabase.DefaultInstance
         .GetReference("Users")
         .OrderByKey()
-        .EqualTo(inputName.text)
+        .EqualTo(name)
         .LimitToFirst(53)
         .GetValueAsync().ContinueWith(task => {
             if (task.IsFaulted)
@@ -67,17 +80,16 @@ public class AddUser : MonoBehaviour
                 DataSnapshot snapshot = task.Result;
                 if (snapshot.ChildrenCount == 1 || inputName.text == "" || inputName.text == null)
                 {
-                    Check = "Busy";
-                   
+                    Check = true;
+                    NameIsBusy = true;
                 }
                 else if (snapshot.ChildrenCount == 0)
                 {
-                    Check = "Free";
+                    Check = true;
+                    NameIsBusy = false;
                 }
-                //AddNewUser(snapshot);
             }
 
         });
     }
-
 }

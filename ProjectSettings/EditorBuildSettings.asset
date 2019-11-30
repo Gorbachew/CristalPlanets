@@ -6,12 +6,18 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/UI.unity
+    guid: 3c2a866759e20794ca3f3a28596b7b72
+  - enabled: 1
     path: Assets/Scenes/Space.unity
     guid: 7ed2bff3a60b9d244b72fbdb4b89dcf7
   - enabled: 1
-    path: Assets/Scenes/Planet0.unity
+    path: Assets/Scenes/Planet.unity
     guid: b704a74e705c9fa4cbf86b57648f8233
   - enabled: 1
     path: Assets/Scenes/Rating.unity
     guid: 697dd18c388b07640822cde9ff62b277
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   m_configObjects: {}

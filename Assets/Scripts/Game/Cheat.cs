@@ -4,17 +4,19 @@ using UnityEngine.UI;
 public class Cheat : MonoBehaviour
 {
     private int count;
-    private Score score;
-    private Fuel fuel;
+
     private InputField inputField;
+    SceneManage SM;
+
     private void Awake()
     {
-        score = GameObject.Find("CanvasScore/Score").GetComponent<Score>();
-        fuel = GameObject.Find("CanvasScore/Fuel").GetComponent<Fuel>();
-        inputField = gameObject.GetComponentInChildren<InputField>();
+        SM = GameObject.Find("MainCamera").GetComponent<SceneManage>();
+
+       
     }
     private void Start()
     {
+        inputField = SM.CanvasPlanet.GetComponentInChildren<InputField>();
         inputField.gameObject.SetActive(false);
     }
     private void OnMouseUpAsButton()
@@ -24,8 +26,8 @@ public class Cheat : MonoBehaviour
         {
             inputField.gameObject.SetActive(true);
         }
-        if (inputField.text == "bablo") score.Plus(1000000);
-        if (inputField.text == "neft") fuel.Plus(1000000);
+        if (inputField.text == "bablo") SM.Score.Change("C","+",1000000);
+        if (inputField.text == "neft") SM.Score.Change("F", "+", 1000000);
     }
 
 

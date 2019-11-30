@@ -1,51 +1,60 @@
-﻿
-using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class SpaceBtn : MonoBehaviour
 {
+    private GameObject Canvas, message;
     private Text text;
-    private SAVELOAD saveload;
-    private AudioSource audioSource;
+    public GameObject UI;
+ 
+    SceneManage SM;
 
-
-    private void Awake()
-    {
-        audioSource = gameObject.GetComponent<AudioSource>();
-        if (gameObject.name == "Rating")
-        {
-            text = GameObject.Find("GC").GetComponentInChildren<Text>();
-            saveload = GameObject.Find("SL").GetComponent<SAVELOAD>();
-        }
-    }
     private void Start()
     {
-        DisplayGC();
-    }
-
-    private void DisplayGC()
-    {
-        if (gameObject.name == "Rating")
+        SM = GameObject.Find("MainCamera").GetComponent<SceneManage>();
+        UI = GameObject.Find("/MainCamera");
+        message = SM.CanvasSpace.transform.Find("Message").gameObject;
+        message.SetActive(false);
+        if (gameObject.name == "CanvasUI")
         {
-            text.text = saveload.ShowInfo("GC");
-                
+            Canvas = GameObject.Find("/CanvasUI");
+            Canvas.GetComponent<Canvas>().worldCamera = UI.GetComponent<Camera>();
+            text = Canvas.transform.Find("CanvasSpace/GC").GetComponentInChildren<Text>();
+            text.text = GameObject.Find("/SL").GetComponent<SAVELOAD>().ShowInfo("GC");
         }
     }
-    private void OnMouseUpAsButton()
-    {
-        audioSource.Play();
 
-        switch (gameObject.name)
+    public void Btn(string btn)
+    {
+        SM.BtnSource.Play();
+        switch (btn)
         {
+            case "Planet0":
+                UI.GetComponent<SceneManage>().LoadScene("Planet0");
+                break;
             case "Rating":
-                SceneManager.LoadScene("Rating");
+                UI.GetComponent<SceneManage>().LoadScene("Rating");
+                break;
+            case "Exit":
+                UI.GetComponent<SceneManage>().LoadScene("Space");
                 break;
             case "Quit":
                 Application.Quit();
                 break;
         }
+        
     }
-    
+    public void Hint(bool On)
+    {
+        SM.BtnSource.Play();
+        if (On) SM.objHint.SetActive(true);
+        else SM.objHint.SetActive(false);
+    }
+    public void Message(bool On)
+    {
+        SM.BtnSource.Play();
+        if (On) message.SetActive(true);
+        else message.SetActive(false);
+    }
     
 }

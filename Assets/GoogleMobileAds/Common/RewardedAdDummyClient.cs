@@ -24,7 +24,7 @@ namespace GoogleMobileAds.Common
     {
         public RewardedAdDummyClient()
         {
-            Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
+         //   Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
         }
 
         // Disable warnings for unused dummy ad events.
@@ -46,12 +46,17 @@ namespace GoogleMobileAds.Common
 
         public void CreateRewardedAd(string adUnitId)
         {
-            Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
+         //   Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
         }
 
         public void LoadAd(AdRequest request)
         {
-            Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
+        //    Debug.Log("Dummy " + MethodBase.GetCurrentMethod().Name);
+
+            if (OnAdLoaded != null)
+            {
+                OnAdLoaded(this, EventArgs.Empty);
+            }
         }
 
         public bool IsLoaded()

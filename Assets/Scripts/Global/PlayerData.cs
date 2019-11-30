@@ -4,7 +4,7 @@ public class PlayerData
 {
     public string Name;
     public string GC;
-    public string Planet1;
+    public string Planet0;
 
 
 
@@ -12,7 +12,7 @@ public class PlayerData
     {
         GC = saveload.ShowInfo("GC");
         Name = saveload.ShowInfo("Name");
-        Planet1 = saveload.ShowInfo("Planet1");
+        Planet0 = saveload.ShowInfo("Planet0");
     }
 }
     

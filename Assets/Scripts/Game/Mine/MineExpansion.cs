@@ -1,54 +1,51 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 
 public class MineExpansion : MonoBehaviour
 {
 
-    private Transform MineBloks,Robots;
-    private PlanetInfo planetInfo;
-    private GameObject buyRobot, Pipe, NextBlock,upgradeBag, upgradeSpeed, upgradeMine, upgradeEnergy;
-    private ParticleSystem particleSystems;
-    private Dynamite dynamiteScript;
-    private BuyRobot buyRobotScript; 
-    private long priceNextBlock;
-    private bool checkDyn;
-    private int maxRobots = 5;
-    private Score score;
-    private int numberRobot;
-    public List<Robot> RobotsList = new List<Robot>();
-    private string robotLevels;
-    public int numberLevel;
-    public int mineBlocks;
-    public bool UpBag, UpSpeed, UpMine, UpEnergy;
-    public long prBag, prSpeed, prMine, prEnergy;
+    private Transform MineBlocks, Robots;
+    [SerializeField]
+    private Robot[] robots;
+    private ParticleSystem psBoom;
+    [SerializeField]
+    private Mines Mines;
+    public int indexMine, mineCristals,mineFuel;
+    [SerializeField]
+    List<GameObject> blocks = new List<GameObject>();
+
+    [SerializeField] private long[] prices = new long[2] {0,0};
+    Text dynPrice, pBuyRobot, pUpBag, pUpSpeed, pUpMine, pUpEnergy;
+    SceneManage SM;
+    public GameObject Pipe, buyRobot, upgradeBag, upgradeSpeed, upgradeMine, upgradeEnergy;
+    public GameObject nextBlock;
 
     private void Awake()
     {
-        score = GameObject.Find("CanvasScore/Score").GetComponent<Score>();
-        planetInfo = Camera.main.GetComponent<PlanetInfo>();
-        MineBloks = gameObject.transform.Find("MineBlocks");
+
+        Debug.Log("Awake MineExpansions");
+        SM = GameObject.Find("MainCamera").GetComponent<SceneManage>();
+
+        MineBlocks = gameObject.transform.Find("MineBlocks");
         Robots = gameObject.transform.Find("Robots");
-        NextBlock = MineBloks.Find("MineBlockNext").gameObject;
+        Mines = gameObject.transform.parent.GetComponent<Mines>();
+        indexMine = transform.GetSiblingIndex();
+
+        dynPrice = gameObject.transform.Find("MineBlocks/MineBlockNext").GetComponentInChildren<Text>();
+        pBuyRobot = gameObject.transform.Find("BuyRobot").GetComponentInChildren<Text>();
+        pUpBag = gameObject.transform.Find("BuyBag").GetComponentInChildren<Text>();
+        pUpSpeed = gameObject.transform.Find("BuySpeed").GetComponentInChildren<Text>();
+        pUpMine = gameObject.transform.Find("BuyMine").GetComponentInChildren<Text>();
+        pUpEnergy = gameObject.transform.Find("BuyEnergy").GetComponentInChildren<Text>();
+
         Pipe = gameObject.transform.Find("Pipe").gameObject;
-        dynamiteScript = NextBlock.GetComponent<Dynamite>();
         buyRobot = gameObject.transform.Find("BuyRobot").gameObject;
-        upgradeBag = gameObject.transform.Find("UpgradeBag").gameObject;
-        upgradeSpeed = gameObject.transform.Find("UpgradeSpeed").gameObject;
-        upgradeMine = gameObject.transform.Find("UpgradeMine").gameObject;
-        upgradeEnergy = gameObject.transform.Find("UpgradeEnergy").gameObject;
-        buyRobotScript = buyRobot.GetComponent<BuyRobot>();
-        particleSystems = NextBlock.GetComponentInChildren<ParticleSystem>();
-        //Записывает о себе данные в массив
-        planetInfo.PlusMineLevels(1);
-        planetInfo.MINESINFO.Add(new List<string>() { mineBlocks.ToString(), "0","0","0","0","0" });
-
-        numberLevel = planetInfo.MineLevels();
-    }
-
-    private void Start()
-    {   
-        NextBlock.SetActive(false);
+        upgradeBag = gameObject.transform.Find("BuyBag").gameObject;
+        upgradeSpeed = gameObject.transform.Find("BuySpeed").gameObject;
+        upgradeMine = gameObject.transform.Find("BuyMine").gameObject;
+        upgradeEnergy = gameObject.transform.Find("BuyEnergy").gameObject;
+        
 
         buyRobot.SetActive(false);
         Pipe.SetActive(false);
@@ -57,152 +54,256 @@ public class MineExpansion : MonoBehaviour
         upgradeMine.SetActive(false);
         upgradeEnergy.SetActive(false);
 
-        prBag = planetInfo.ShowPrice("UB") * numberLevel;
-        prSpeed = planetInfo.ShowPrice("US") * numberLevel;
-        prMine = planetInfo.ShowPrice("UM") * numberLevel;
-        prEnergy = planetInfo.ShowPrice("UE") * numberLevel;
+        //Роботы
+        robots = Robots.GetComponentsInChildren<Robot>();
 
-        //Сообщает уровень роботов
-        robotLevels = planetInfo.MINESINFO[numberLevel - 1][1];
-        //Выдает цены
-        buyRobotScript.Price(score.PriceRobotMiner(true,planetInfo.ShowPrice("RB"),numberLevel,int.Parse(robotLevels)));
-        dynamiteScript.PriceNextBlock(score.PriceDyn(true,planetInfo.ShowPrice("D"), numberLevel,mineBlocks));
+        LoadBlocks();
+        //nextBlock имеет ссылку только после LoadBlocks()
+        psBoom = nextBlock.GetComponentInChildren<ParticleSystem>();
+
     }
-    private void FixedUpdate()
+   
+    private void LoadBlocks()
     {
-        CheckProgress();
-    }
-    public void BuyDyn(bool Load)
-    {
+        //Получение ссылок на роботов и блоков сначала игры
+        //Блоки
+        Transform[] allComponents = MineBlocks.GetComponentsInChildren<Transform>();
+
+        foreach (Transform components in allComponents)
+        {
+            if (components.name == "MineBlock" || components.name == "MineBlockBunch")
+            {
+                blocks.Add(components.gameObject);
+                components.gameObject.SetActive(false);
+            }
+            else if (components.name == "MineBlockNext")
+            {
+                nextBlock = components.gameObject;
+                components.gameObject.SetActive(false);
+            }
+        }
         
-        if (mineBlocks == 0)
+        foreach (Robot robot in robots)
         {
-            Instantiate(Resources.Load("Prefab/MineBlockBunch"), MineBloks);
+
+            robot.gameObject.SetActive(false);
         }
-        else
-        {
-            GameObject mineBlock = Instantiate(Resources.Load("Prefab/MineBlock"), MineBloks) as GameObject;
-            mineBlock.transform.SetSiblingIndex(0);
-        }
-        //Перетаскивает блоки вправо
-        NextBlock.transform.SetSiblingIndex(MineBloks.transform.childCount);
-        mineBlocks += 1;
-        //Увеличивает на 1 кол-во mineBlock
-        planetInfo.MINESINFO[numberLevel - 1][0] = (int.Parse(planetInfo.MINESINFO[numberLevel - 1][0]) + 1).ToString();
-        //Выдает цену следующему блоку, если load = true то не вычитает деньги за динамит
-        dynamiteScript.PriceNextBlock(score.PriceDyn(Load, planetInfo.ShowPrice("D"), numberLevel, mineBlocks));
-        
-        particleSystems.Play();
-        if (MineBloks.transform.childCount >= 9) Destroy(NextBlock.gameObject);           
+
     }
-    public void BuyRobot(bool Load)
+
+
+    public void BtnClick(string Btn)
     {
-        //Увеличивает на 1 кол-во Robots
-        planetInfo.MINESINFO[numberLevel - 1][1] = (int.Parse(planetInfo.MINESINFO[numberLevel - 1][1]) + 1).ToString();
-        robotLevels = planetInfo.MINESINFO[numberLevel - 1][1];
-        //Если роботов больше чем максимум то улучшает робота
-        if (int.Parse(robotLevels) > maxRobots)
+        //SM.BuySourse.Play();
+        int index = indexMine + 1;
+        long price = 0;
+        switch (Btn)
         {
-            RobotsList[numberRobot].LevelUp();
-            numberRobot += 1;
-            if (numberRobot >= maxRobots) numberRobot = 0;
-        }
-        else
-        {
-            GameObject robotObj = Instantiate(Resources.Load("Prefab/RoboMiner"), Robots) as GameObject;
-            Robot robot = robotObj.GetComponent<Robot>();
-            RobotsList.Add(robot);
-        }
-        buyRobotScript.Price(score.PriceRobotMiner(Load, planetInfo.ShowPrice("RB"), numberLevel, int.Parse(robotLevels)));  
-    }
-    public void BuyUp(string Up)
-    {
-        switch (Up)
-        {
+            case "D":
+
+                if (SM.Score.CheckPrice(false,prices[0]))
+                {
+                    SM.Score.Change("C", "-", prices[0]);
+                    SM.DynSource.Play();
+                    Mines.MINESINFO[indexMine][0] += 1;
+                    psBoom.Play();
+                    // dynPrice.text = SM.Score.ConvertPrice(price);
+                    SM.Mines.CheckMines("B");
+                    SM.Mines.CheckMines("U");
+                }
+                break;
+            case "R":
+
+                if (SM.Score.CheckPrice(false, prices[1]))
+                {
+                    SM.Score.Change("C", "-", prices[1]);
+                    SM.Mines.MINESINFO[indexMine][1] += 1;
+                    CheckRobots("R");
+                
+                }
+                break;
             case "B":
-                UpBag = true;
-                planetInfo.MINESINFO[numberLevel - 1][2] = "1";
-                score.Minus(prBag);
+                price = index * PlanetInfo.priceBag;
+                if (SM.Score.CheckPrice(false, price))
+                {
+                    SM.Mines.MINESINFO[indexMine][2] += 1;
+                    CheckRobots("U");
+                    SM.Score.Change("C", "-", price);
+                }
                 break;
             case "S":
-                UpSpeed = true;
-                planetInfo.MINESINFO[numberLevel - 1][3] = "1";
-                score.Minus(prSpeed);
+                price = index * PlanetInfo.priceSpeed;
+                if (SM.Score.CheckPrice(false, price))
+                {
+                    SM.Mines.MINESINFO[indexMine][3] += 1;
+                    CheckRobots("U");
+                    SM.Score.Change("C", "-", price);
+                }
                 break;
             case "M":
-                UpMine = true;
-                planetInfo.MINESINFO[numberLevel - 1][4] = "1";
-                score.Minus(prMine);
+                price = index * PlanetInfo.priceMine;
+                if (SM.Score.CheckPrice(false, price))
+                {
+                    SM.Mines.MINESINFO[indexMine][4] += 1;
+                    CheckRobots("U");
+                    SM.Score.Change("C", "-", price);
+                }
                 break;
             case "E":
-                UpEnergy = true;
-                planetInfo.MINESINFO[numberLevel - 1][5] = "1";
-                score.Minus(prEnergy);
+                price = index * PlanetInfo.priceEnergy;
+                if (SM.Score.CheckPrice(false, price))
+                {
+                    SM.Mines.MINESINFO[indexMine][5] += 1;
+                    CheckRobots("U");
+                    SM.Score.Change("C", "-", price);
+                }
+                break;
+        }
+
+    }
+    public void CheckBlocks()
+    {
+
+        //Выдает динамиту цену
+        prices[0] = SM.Score.PriceMine("D", indexMine);
+        dynPrice.text = SM.Score.ConvertPrice(prices[0]);
+        
+        //Проверяет на наличие блоков в общем массиве и выставляет их в нужном порядке
+        int blockCount = Mines.MINESINFO[indexMine][0] - 1;
+        if (blockCount > 0)
+        {
+            buyRobot.SetActive(true);
+            Pipe.SetActive(true);
+        }
+        foreach (GameObject block in blocks)
+        {
+            if (blockCount > 0)
+            {
+                blockCount--;
+                block.SetActive(true);
+                block.transform.SetSiblingIndex(0);
+          
+            }
+            else block.SetActive(false);
+        }
+        
+        //Проверка на возможность взрыва динамита
+        if (!nextBlock.activeSelf)
+        {
+
+            int topmine = indexMine - 1;
+            if (indexMine > 0)
+            {
+                if (Mines.MINESINFO[topmine][0] > 1) nextBlock.SetActive(true);
+            }
+            else if (indexMine == 0) nextBlock.SetActive(true);
+        }
+
+        //Если блоки заканчиваются, то динамит пропадает
+        if (nextBlock.transform.GetSiblingIndex() >= 8)
+        {
+            nextBlock.SetActive(false);
+        }
+    }
+    public void CheckRobots(string value)
+    {
+        switch (value)
+        {
+            //Robot
+            case "R":
+                //Высчитывает цену
+                prices[1] = SM.Score.PriceMine("R", indexMine);
+                pBuyRobot.text = SM.Score.ConvertPrice(prices[1]);
+                //Проверка роботов
+                int robotCount = Mines.MINESINFO[indexMine][1];
+                int[] levels = new int[5] { 0, 0, 0, 0, 0 };
+                //По порядку дробит robotCount на уровни каждому роботу
+                for (int i = 0; i < robotCount; i++)
+                {
+                    if (levels[0] == levels[4]) levels[0]++;
+                    else if (levels[0] > levels[1]) levels[1]++;
+                    else if (levels[1] > levels[2]) levels[2]++;
+                    else if (levels[2] > levels[3]) levels[3]++;
+                    else if (levels[3] > levels[4]) levels[4]++;
+                }
+                //Причисляет каждому роботу свой уровень
+                int robotNumber = 0;
+                foreach (Robot robot in robots)
+                {
+
+                    if (levels[robotNumber] > 0) robot.gameObject.SetActive(true);
+                    else robot.gameObject.SetActive(false);
+                    if (robot.gameObject.activeSelf)
+                    {
+                        robot.LevelUp(levels[robotNumber]);
+                        robot.Load();
+                    }
+                    
+                    robotNumber++;
+                }
+                
+                
+                break;
+            //Upgrade
+            case "U":
+                foreach (Robot robot in robots)
+                {
+                    robot.CheckUp(indexMine);
+                    if (SM.Mines.MINESINFO[indexMine][2] == 1) upgradeBag.SetActive(false);
+                    if (SM.Mines.MINESINFO[indexMine][3] == 1) upgradeSpeed.SetActive(false);
+                    if (SM.Mines.MINESINFO[indexMine][4] == 1) upgradeMine.SetActive(false);
+                    if (SM.Mines.MINESINFO[indexMine][5] == 1) upgradeEnergy.SetActive(false);
+
+                }
                 break;
 
-
         }
+
     }
 
-
-    private void CheckProgress()
+    public void CheckUpgrade(string value)
     {
-        //Проверяет можно ли отображать динамит
-        if (planetInfo.MineLevels() > numberLevel && !checkDyn)
+        //Проверяет, отображать ли улучшения если достигнут уровень лаборатории
+        int blockCount = Mines.MINESINFO[indexMine][0];
+        if (blockCount > 1)
         {
-            //Ок если число шахт больше чем номер шахты (чтобы не загораживал бур)
-
-            if (numberLevel > 1)
+            int index = indexMine + 1;
+            switch (value)
             {
-                //Проверяет, построена ли шахта сверху
-                if (planetInfo.MINESINFO[numberLevel - 2][0] != "0")
-                {
-                    NextBlock.SetActive(true);
-                    checkDyn = true;
-                }
-            }
-            else
-            {
-                //Первой шахте дает построиться без проверки
-                NextBlock.SetActive(true);
-                checkDyn = true;
-            }
-
-                
-        }
-
-        if (mineBlocks > 0)
-        {
-          buyRobot.SetActive(true);
-          Pipe.SetActive(true);
-            //Отображает улучшения для роботов если достигнут уровень лаборатории
-            if (planetInfo.upgradeBagBool)
-            {
-                if(!UpBag)upgradeBag.SetActive(true);
-                else upgradeBag.SetActive(false);
-                upgradeBag.GetComponent<BuyUpgrade>().PriceUp(prBag.ToString());
-            }
-
-            if (planetInfo.upgradeSpeedBool)
-            {
-                if (!UpSpeed) upgradeSpeed.SetActive(true);
-                else upgradeSpeed.SetActive(false);
-                upgradeSpeed.GetComponent<BuyUpgrade>().PriceUp(prSpeed.ToString());
-            }
-
-            if (planetInfo.upgradeMineBool)
-            {
-                if (!UpMine) upgradeMine.SetActive(true);
-                else upgradeMine.SetActive(false);
-                upgradeMine.GetComponent<BuyUpgrade>().PriceUp(prMine.ToString());
-            }
-            if (planetInfo.upgradeEnergyBool)
-            {
-                if (!UpEnergy) upgradeEnergy.SetActive(true);
-                else upgradeEnergy.SetActive(false);
-                upgradeEnergy.GetComponent<BuyUpgrade>().PriceUp(prEnergy.ToString());
+                case "B":
+                    upgradeBag.SetActive(true);
+                    pUpBag.text = SM.Score.ConvertPrice(PlanetInfo.priceBag * index);
+                    break;
+                case "S":
+                    upgradeSpeed.SetActive(true);
+                    pUpSpeed.text = SM.Score.ConvertPrice(PlanetInfo.priceSpeed * index);
+                    break;
+                case "M":
+                    upgradeMine.SetActive(true);
+                    pUpMine.text = SM.Score.ConvertPrice(PlanetInfo.priceMine * index);
+                    break;
+                case "E":
+                    upgradeEnergy.SetActive(true);
+                    pUpEnergy.text = SM.Score.ConvertPrice(PlanetInfo.priceEnergy * index);
+                    break;
             }
         }
     }
 
+    public void GetStatistic()
+    {
+        int value = 0;
+        int fuel = 0;
+        foreach(Robot robot in robots)
+        {
+            if (robot.gameObject.activeSelf)
+            {
+                value += robot.valueBag;
+                fuel += robot.fuelNeed;
+            }
+            
+        }
+        mineCristals = value;
+        mineFuel = fuel;
+    }
 }

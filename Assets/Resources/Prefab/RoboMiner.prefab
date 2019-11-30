@@ -1340,7 +1340,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6755112525895368373}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0.038361736, w: 0.99926394}
   m_LocalPosition: {x: -0.29001486, y: -1.3, z: -90.11523}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1349,7 +1349,7 @@ Transform:
   - {fileID: 1723319452955700420}
   m_Father: {fileID: 1789376240257743874}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -4.3970003}
 --- !u!1 &6788991707409142988
 GameObject:
   m_ObjectHideFlags: 0
@@ -1622,7 +1622,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 2, y: 3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &8939751707091896565
 Animator:
@@ -1655,6 +1655,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ccf1fa9b99456743a9caed6cd7aaa9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bunchClose: 0
+  fullBag: 0
+  brakeRobot: 0
+  startMining: 0
+  brakeRobotBool: 0
+  valueBag: 0
+  tank: 0
 --- !u!61 &7849548306507323294
 BoxCollider2D:
   m_ObjectHideFlags: 0
